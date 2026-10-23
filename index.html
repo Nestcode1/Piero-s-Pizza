@@ -4,51 +4,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Piero's Pizza - Menú & Pedidos Online</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+      /* --- PALETA DE COLORES OSCURA --- */
+      :root {
+        --bg-primary: #0f1015;
+        --bg-card: #181a24;
+        --bg-card-hover: #212433;
+        --text-primary: #ffffff;
+        --text-secondary: #9ca3af;
+        --border-color: rgba(255, 255, 255, 0.15);
+        --header-bg: rgba(15, 16, 21, 0.95);
+        --btn-primary-bg: #ff5722;
+        --btn-primary-text: #ffffff;
+        --accent-orange: #ff5722;
+        --accent-yellow: #ffb300;
+        --shadow-color: rgba(0, 0, 0, 0.6);
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: 'Outfit', sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      main { max-width: 1100px; margin: 0 auto; padding: 0 12px; }
+
+      /* Header & Navegación Móvil */
+      header {
+        background-color: var(--header-bg);
+        backdrop-filter: blur(10px);
+        padding: 15px 20px;
+        display: flex; justify-content: space-between; align-items: center;
+        position: sticky; top: 0; z-index: 1000;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      header .logo {
+        font-size: 1.2rem; font-weight: 800;
+        color: var(--accent-orange);
+        display: flex; align-items: center; gap: 8px;
+      }
+
+      .menu-toggle {
+        display: flex; flex-direction: column; gap: 5px;
+        background: none; border: none; cursor: pointer; padding: 5px;
+      }
+
+      .menu-toggle .bar {
+        width: 25px; height: 3px;
+        background-color: var(--text-primary);
+        border-radius: 2px; transition: all 0.3s ease;
+      }
+
+      .nav-links {
+        display: none; flex-direction: column;
+        position: absolute; top: 100%; left: 0; width: 100%;
+        background-color: var(--bg-card);
+        padding: 15px 0; border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 10px 25px var(--shadow-color);
+      }
+
+      .nav-links.active { display: flex !important; }
+
+      header nav a {
+        color: var(--text-primary); text-decoration: none;
+        font-size: 1rem; padding: 12px 25px; font-weight: 600;
+      }
+
+      header nav a:hover { background-color: var(--bg-card-hover); color: var(--accent-orange); }
+
+      @media (min-width: 769px) {
+        .menu-toggle { display: none; }
+        .nav-links {
+          display: flex !important; position: static;
+          flex-direction: row; width: auto; background: transparent;
+          padding: 0; border: none; box-shadow: none;
+        }
+      }
+
+      /* Hero Section */
+      .hero-section { padding: 30px 10px; text-align: center; }
+      .hero-badge {
+        display: inline-block; background: var(--bg-card); color: var(--accent-yellow);
+        border: 1px solid var(--border-color); padding: 5px 14px; border-radius: 20px;
+        font-size: 0.8rem; margin-bottom: 15px; font-weight: 600;
+      }
+      .hero-title { font-size: 1.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 15px; }
+      .hero-subtitle { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 20px; }
+      .hero-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+      .btn-primary, .btn-secondary {
+        padding: 12px 20px; border-radius: 8px; font-weight: 700;
+        text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
+        border: none; cursor: pointer; font-size: 0.95rem;
+      }
+      .btn-primary { background: var(--btn-primary-bg); color: #fff; }
+      .btn-secondary { background: var(--bg-card); color: #fff; border: 1px solid var(--border-color); }
+
+      /* Secciones de Contenido */
+      .content-section {
+        background: var(--bg-card); border: 1px solid var(--border-color);
+        border-radius: 16px; margin: 20px 0; padding: 20px 12px;
+        display: block !important; visibility: visible !important; opacity: 1 !important;
+      }
+      .content-section h2 { font-size: 1.6rem; margin-bottom: 5px; color: var(--text-primary); text-align: center; }
+      .section-desc { text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px; }
+
+      .menu-category-title {
+        font-size: 1.2rem; font-weight: 800; color: var(--accent-yellow);
+        margin: 25px 0 12px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;
+        display: block !important;
+      }
+
+      /* GRIDS Y TARJETAS DEL MENÚ - FORZADO VISIBLE */
+      .servicios-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+        margin-bottom: 25px;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+
+      @media (min-width: 600px) {
+        .servicios-grid {
+          display: grid !important;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+        }
+      }
+
+      .card {
+        background: #12141d !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-height: 120px !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+
+      .card h3 { font-size: 1.1rem !important; margin-bottom: 6px !important; color: #ffffff !important; display: block !important; }
+      .card-desc { font-size: 0.85rem !important; color: var(--text-secondary) !important; margin-bottom: 12px !important; display: block !important; }
+      .card-price { font-size: 1.2rem !important; font-weight: 800 !important; color: var(--accent-orange) !important; display: block !important; margin-bottom: 12px !important; }
+
+      .btn-card-add {
+        background: rgba(255, 87, 34, 0.2) !important;
+        color: #ff7043 !important;
+        border: 1px solid var(--accent-orange) !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        cursor: pointer !important;
+        width: 100% !important;
+        text-align: center !important;
+        display: block !important;
+      }
+
+      /* Selector, Carrito y Pagos */
+      .order-builder-grid {
+        display: grid; gap: 20px; grid-template-columns: 1fr;
+        background: var(--bg-primary); border: 1px solid var(--border-color);
+        border-radius: 12px; padding: 15px;
+      }
+
+      .select-box { margin-bottom: 12px; display: flex; flex-direction: column; gap: 5px; }
+      .select-box label, .form-group label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; }
+      .select-box select, .select-box input, .form-group input, .form-group select, .form-group textarea {
+        width: 100%; padding: 12px; background: var(--bg-card);
+        border: 1px solid var(--border-color); border-radius: 8px;
+        color: var(--text-primary); font-size: 0.95rem; outline: none;
+      }
+
+      .cart-list {
+        list-style: none; max-height: 200px; overflow-y: auto;
+        border: 1px solid var(--border-color); border-radius: 8px;
+        padding: 10px; background: var(--bg-card); margin-bottom: 12px;
+      }
+      .cart-empty { color: var(--text-secondary); text-align: center; font-size: 0.85rem; padding: 10px; }
+      .cart-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem;
+      }
+      .cart-item button { background: none; border: none; color: #ef4444; font-size: 1rem; cursor: pointer; }
+
+      .cart-total-container {
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 1.05rem; padding: 10px 0; border-top: 1px solid var(--border-color);
+      }
+      .cart-total-container strong { color: var(--accent-orange); font-size: 1.2rem; }
+
+      .payment-detail-card {
+        background: var(--bg-card); border: 1px solid var(--border-color);
+        border-radius: 8px; padding: 12px; margin-top: 8px;
+      }
+      .payment-note { font-size: 0.8rem; color: var(--accent-yellow); margin-top: 5px; }
+      .payment-info-text { font-size: 0.85rem; color: var(--text-secondary); }
+      .spei-details p { font-size: 0.85rem; margin-bottom: 4px; }
+      .spei-title { font-weight: 700; color: var(--accent-yellow); margin-bottom: 6px !important; }
+      .spei-details code { background: var(--bg-primary); padding: 2px 6px; border-radius: 4px; color: var(--accent-orange); font-weight: bold; }
+
+      .mt-20 { margin-top: 15px; }
+      .btn-full { width: 100%; text-align: center; }
+
+      /* Toast */
+      .toast-container { position: fixed; bottom: 15px; right: 15px; left: 15px; z-index: 2000; }
+      .toast {
+        background: var(--bg-card); color: #fff; border: 1px solid var(--accent-orange);
+        padding: 12px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        font-size: 0.85rem; font-weight: 600; text-align: center;
+      }
+
+      footer { text-align: center; padding: 25px 15px; color: var(--text-secondary); font-size: 0.8rem; }
+    </style>
 </head>
 <body>
 
-    <!-- Barra de progreso de scroll -->
-    <div class="scroll-progress-bar" id="scrollProgressBar"></div>
-
-    <!-- Contenedor de Notificaciones Toast -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- Encabezado y Navegación -->
+    <!-- Header -->
     <header>
-        <div class="logo">
-            <svg class="logo-icon" viewBox="0 0 100 100" fill="currentColor">
-                <path d="M50 15 C35 15 25 25 25 35 C25 37 26 39 27 40 C20 42 15 48 15 55 C15 63 22 70 30 70 L70 70 C78 70 85 63 85 55 C85 48 80 42 73 40 C74 39 75 37 75 35 C75 25 65 15 50 15 Z" fill="#ff5722"/>
-                <rect x="20" y="72" width="60" height="8" rx="4" fill="#ffb300"/>
-            </svg>
-            <span>Piero's Pizza</span>
-        </div>
-        <div class="header-right">
-            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
-            <nav class="nav-links" id="navLinks">
-                <a href="#inicio">Inicio</a>
-                <a href="#menu">Menú Completo</a>
-                <a href="#ordenar">Arma tu Pedido</a>
-                <a href="#nosotros">Ubicación</a>
-                <a href="#contacto">Contacto</a>
-            </nav>
-        </div>
+        <div class="logo">🍕 <span>Piero's Pizza</span></div>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <nav class="nav-links" id="navLinks">
+            <a href="#inicio">Inicio</a>
+            <a href="#menu">Menú Completo</a>
+            <a href="#ordenar">Arma tu Pedido</a>
+        </nav>
     </header>
 
     <main>
-        <!-- Sección Hero -->
-        <section id="inicio" class="hero-section fade-in">
+        <!-- Hero -->
+        <section id="inicio" class="hero-section">
             <div class="hero-container">
                 <span class="hero-badge">🔥 Pizzería · Restaurant · Gourmet</span>
-                <h1 class="hero-title">Pizzas crujientes, hamburguesas, calzones y alitas deliciosas</h1>
-                <p class="hero-subtitle">Selecciona tus platillos favoritos, elige tu método de pago y envía tu pedido directamente por WhatsApp.</p>
+                <h1 class="hero-title">Pizzas, Hamburguesas y Alitas</h1>
+                <p class="hero-subtitle">Selecciona tus platillos y envía tu pedido directamente a nuestro WhatsApp.</p>
                 <div class="hero-actions">
                     <a href="#ordenar" class="btn-primary">Armar mi Pedido 🛒</a>
                     <a href="#menu" class="btn-secondary">Ver Menú</a>
@@ -56,18 +262,18 @@
             </div>
         </section>
 
-        <!-- Sección Menú Completo -->
-        <section id="menu" class="content-section fade-in">
+        <!-- Sección Menú -->
+        <section id="menu" class="content-section">
             <h2>Nuestra Carta</h2>
-            <p class="section-desc">Agrega productos directamente a tu carrito con un solo clic.</p>
+            <p class="section-desc">Toca en ➕ Agregar para meter el producto a tu pedido.</p>
 
             <!-- PIZZAS -->
             <div class="menu-category-title">🍕 Pizzas</div>
-            <div class="servicios-grid mb-30">
+            <div class="servicios-grid">
                 <div class="card">
                     <div>
                         <h3>Pizza Mini</h3>
-                        <p class="card-desc">Sabor artesanal individual perfecto para antojos.</p>
+                        <p class="card-desc">Individual para antojos.</p>
                         <span class="card-price">$56.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Pizza Mini', 56)">➕ Agregar</button>
@@ -75,7 +281,7 @@
                 <div class="card">
                     <div>
                         <h3>Pizza Chica</h3>
-                        <p class="card-desc">Ideal para 1 persona con tus ingredientes favoritos.</p>
+                        <p class="card-desc">Ideal para 1 persona.</p>
                         <span class="card-price">$90.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Pizza Chica', 90)">➕ Agregar</button>
@@ -83,7 +289,7 @@
                 <div class="card">
                     <div>
                         <h3>Pizza Mediana</h3>
-                        <p class="card-desc">Perfecta para compartir entre 2 personas.</p>
+                        <p class="card-desc">Para compartir de a 2.</p>
                         <span class="card-price">$110.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Pizza Mediana', 110)">➕ Agregar</button>
@@ -91,7 +297,7 @@
                 <div class="card">
                     <div>
                         <h3>Pizza Grande</h3>
-                        <p class="card-desc">Tamaño clásico familiar de 8 rebanadas.</p>
+                        <p class="card-desc">Tamaño clásico familiar.</p>
                         <span class="card-price">$135.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Pizza Grande', 135)">➕ Agregar</button>
@@ -99,7 +305,7 @@
                 <div class="card">
                     <div>
                         <h3>Pizza Familiar</h3>
-                        <p class="card-desc">La más grande de la casa para toda la familia.</p>
+                        <p class="card-desc">La más grande de la casa.</p>
                         <span class="card-price">$165.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Pizza Familiar', 165)">➕ Agregar</button>
@@ -108,11 +314,11 @@
 
             <!-- HAMBURGUESAS -->
             <div class="menu-category-title">🍔 Hamburguesas</div>
-            <div class="servicios-grid mb-30">
+            <div class="servicios-grid">
                 <div class="card">
                     <div>
                         <h3>Hamburguesa Sencilla</h3>
-                        <p class="card-desc">Carne de res, queso, verduras frescas y aderezos.</p>
+                        <p class="card-desc">Carne, queso y verduras.</p>
                         <span class="card-price">$50.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Hamburguesa Sencilla', 50)">➕ Agregar</button>
@@ -120,138 +326,32 @@
                 <div class="card">
                     <div>
                         <h3>Hamburguesa con Papas</h3>
-                        <p class="card-desc">Acompañada con una orden de papas crujientes.</p>
+                        <p class="card-desc">Con papas crujientes.</p>
                         <span class="card-price">$60.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Hamburguesa con Papas', 60)">➕ Agregar</button>
                 </div>
                 <div class="card">
                     <div>
-                        <h3>Hamburguesa con Piña</h3>
-                        <p class="card-desc">Estilo hawaiano con rebanada de piña asada.</p>
-                        <span class="card-price">$60.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Hamburguesa con Piña', 60)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Hamburguesa Champiñón</h3>
-                        <p class="card-desc">Con jugosos champiñones salteados.</p>
-                        <span class="card-price">$60.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Hamburguesa Champiñón', 60)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Hamburguesa Tocino</h3>
-                        <p class="card-desc">Con crujientes tiras de tocino ahumado.</p>
-                        <span class="card-price">$60.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Hamburguesa Tocino', 60)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
                         <h3>Hamburguesa Hawaiana</h3>
-                        <p class="card-desc">Jamón, piña y doble queso derretido.</p>
+                        <p class="card-desc">Jamón, piña y queso derretido.</p>
                         <span class="card-price">$70.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Hamburguesa Hawaiana', 70)">➕ Agregar</button>
                 </div>
                 <div class="card">
                     <div>
-                        <h3>Hamburguesa de Camarón</h3>
-                        <p class="card-desc">Especialidad de la casa con camarones sazonados.</p>
-                        <span class="card-price">$70.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Hamburguesa de Camarón', 70)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
                         <h3>Hamburguesa Doble Carne</h3>
-                        <p class="card-desc">Doble porción de carne jugosa con queso extra.</p>
+                        <p class="card-desc">Doble carne jugosa y queso.</p>
                         <span class="card-price">$80.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Hamburguesa Doble Carne con queso', 80)">➕ Agregar</button>
                 </div>
             </div>
 
-            <!-- TORTA CUBANA & CALZONES -->
-            <div class="menu-category-title">🥪 Torta Cubana & 🥟 Calzone</div>
-            <div class="servicios-grid mb-30">
-                <div class="card">
-                    <div>
-                        <h3>Torta Cubana</h3>
-                        <p class="card-desc">Jamón, salami, chorizo, jitomate, cebolla, queso y mozzarella.</p>
-                        <span class="card-price">$60.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Torta Cubana', 60)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Calzone Mini</h3>
-                        <p class="card-desc">Empanada italiana horneada e individual.</p>
-                        <span class="card-price">$68.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Calzone Mini', 68)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Calzone Chico</h3>
-                        <p class="card-desc">Relleno abundante con queso fundido e ingredientes.</p>
-                        <span class="card-price">$100.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Calzone Chico', 100)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Calzone Mediano (para 2)</h3>
-                        <p class="card-desc">Tamaño ideal para compartir en pareja.</p>
-                        <span class="card-price">$123.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Calzone Mediano (para 2)', 123)">➕ Agregar</button>
-                </div>
-            </div>
-
-            <!-- PAPAS -->
-            <div class="menu-category-title">🍟 Papas</div>
-            <div class="servicios-grid mb-30">
-                <div class="card">
-                    <div>
-                        <h3>Papas a la Francesa (Mediana)</h3>
-                        <p class="card-desc">Clásicas papas doradas y crujientes.</p>
-                        <span class="card-price">$35.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Papas a la Francesa Med', 35)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Papas a la Francesa (Grande)</h3>
-                        <p class="card-desc">Porción familiar para compartir.</p>
-                        <span class="card-price">$50.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Papas a la Francesa Gde', 50)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Papas Gajos (Mediana)</h3>
-                        <p class="card-desc">Papas sazonadas con finas hierbas y especias.</p>
-                        <span class="card-price">$45.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Papas Gajos Med', 45)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Papas Gajos (Grande)</h3>
-                        <p class="card-desc">Porción grande sazonada al estilo de la casa.</p>
-                        <span class="card-price">$65.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Papas Gajos Gde', 65)">➕ Agregar</button>
-                </div>
-            </div>
-
-            <!-- ALITAS & COMPLEMENTOS -->
-            <div class="menu-category-title">🍗 Alitas & Complementos</div>
-            <div class="servicios-grid mb-30">
+            <!-- ALITAS Y PAPAS -->
+            <div class="menu-category-title">🍗 Alitas & Papas</div>
+            <div class="servicios-grid">
                 <div class="card">
                     <div>
                         <h3>Alitas (6 pzas)</h3>
@@ -263,132 +363,53 @@
                 <div class="card">
                     <div>
                         <h3>Alitas (12 pzas)</h3>
-                        <p class="card-desc">Escoge tus salsas favoritas con aderezo.</p>
+                        <p class="card-desc">Bañadas en tu salsa favorita.</p>
                         <span class="card-price">$115.00</span>
                     </div>
                     <button class="btn-card-add" onclick="agregarDirecto('Alitas 12 pzas', 115)">➕ Agregar</button>
                 </div>
                 <div class="card">
                     <div>
-                        <h3>Alitas (18 pzas)</h3>
-                        <p class="card-desc">Porción mediana para compartir.</p>
-                        <span class="card-price">$170.00</span>
+                        <h3>Papas a la Francesa (Med)</h3>
+                        <p class="card-desc">Papas doraditas.</p>
+                        <span class="card-price">$35.00</span>
                     </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Alitas 18 pzas', 170)">➕ Agregar</button>
+                    <button class="btn-card-add" onclick="agregarDirecto('Papas a la Francesa Med', 35)">➕ Agregar</button>
                 </div>
                 <div class="card">
                     <div>
-                        <h3>Alitas (24 pzas)</h3>
-                        <p class="card-desc">Paquete ideal para reuniones.</p>
-                        <span class="card-price">$220.00</span>
+                        <h3>Papas Gajos (Med)</h3>
+                        <p class="card-desc">Sazonadas con especias.</p>
+                        <span class="card-price">$45.00</span>
                     </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Alitas 24 pzas', 220)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Alitas (30 pzas)</h3>
-                        <p class="card-desc">La orden más grande de alitas bañadas.</p>
-                        <span class="card-price">$290.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Alitas 30 pzas', 290)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Dedos de Mozzarella</h3>
-                        <p class="card-desc">Crujientes por fuera y queso derretido por dentro.</p>
-                        <span class="card-price">$75.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Dedos de Mozzarella', 75)">➕ Agregar</button>
-                </div>
-            </div>
-
-            <!-- BEBIDAS -->
-            <div class="menu-category-title">🥤 Bebidas</div>
-            <div class="servicios-grid">
-                <div class="card">
-                    <div>
-                        <h3>Refresco 2 Litros</h3>
-                        <p class="card-desc">Coca-Cola o sabores bien fríos.</p>
-                        <span class="card-price">$40.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Refresco 2Lts', 40)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Refresco Individual</h3>
-                        <p class="card-desc">Lata o botella personal.</p>
-                        <span class="card-price">$17.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Refresco Individual', 17)">➕ Agregar</button>
-                </div>
-                <div class="card">
-                    <div>
-                        <h3>Naranjada</h3>
-                        <p class="card-desc">Preparada natural o con agua mineral.</p>
-                        <span class="card-price">$23.00</span>
-                    </div>
-                    <button class="btn-card-add" onclick="agregarDirecto('Naranjada', 23)">➕ Agregar</button>
+                    <button class="btn-card-add" onclick="agregarDirecto('Papas Gajos Med', 45)">➕ Agregar</button>
                 </div>
             </div>
         </section>
 
-        <!-- Sección interactiva: Arma tu Pedido -->
-        <section id="ordenar" class="content-section fade-in">
-            <div class="contacto-header">
-                <span class="badge-contacto">🚀 Pedidos en Línea</span>
-                <h2>Arma tu Pedido y Envíalo por WhatsApp</h2>
-                <p class="section-desc">Selecciona productos desde el selector o usa los botones de la carta arriba.</p>
-            </div>
+        <!-- Módulo de Pedidos -->
+        <section id="ordenar" class="content-section">
+            <h2>Arma tu Pedido</h2>
+            <p class="section-desc">Revisa tus productos, selecciona método de pago y envíalo.</p>
 
             <div class="order-builder-grid">
-                <!-- Selector Manual de Productos -->
+                <!-- Selector -->
                 <div class="products-selection">
-                    <h3>1. Selecciona tus Platillos</h3>
                     <div class="select-box">
-                        <label for="productoSelect">Producto:</label>
+                        <label for="productoSelect">Agregar otro producto:</label>
                         <select id="productoSelect">
-                            <optgroup label="Pizzas">
-                                <option value="Pizza Mini" data-price="56">Pizza Mini - $56</option>
-                                <option value="Pizza Chica" data-price="90">Pizza Chica - $90</option>
-                                <option value="Pizza Mediana" data-price="110">Pizza Mediana - $110</option>
-                                <option value="Pizza Grande" data-price="135">Pizza Grande - $135</option>
-                                <option value="Pizza Familiar" data-price="165">Pizza Familiar - $165</option>
-                            </optgroup>
-                            <optgroup label="Hamburguesas">
-                                <option value="Hamburguesa Sencilla" data-price="50">Hamburguesa Sencilla - $50</option>
-                                <option value="Hamburguesa con Papas" data-price="60">Hamburguesa con Papas - $60</option>
-                                <option value="Hamburguesa con Piña" data-price="60">Hamburguesa con Piña - $60</option>
-                                <option value="Hamburguesa Champiñón" data-price="60">Hamburguesa Champiñón - $60</option>
-                                <option value="Hamburguesa Tocino" data-price="60">Hamburguesa Tocino - $60</option>
-                                <option value="Hamburguesa Hawaiana" data-price="70">Hamburguesa Hawaiana - $70</option>
-                                <option value="Hamburguesa de Camarón" data-price="70">Hamburguesa de Camarón - $70</option>
-                                <option value="Hamburguesa Doble Carne con queso" data-price="80">Hamburguesa Doble Carne con queso - $80</option>
-                            </optgroup>
-                            <optgroup label="Torta Cubana & Calzone">
-                                <option value="Torta Cubana" data-price="60">Torta Cubana - $60</option>
-                                <option value="Calzone Mini" data-price="68">Calzone Mini - $68</option>
-                                <option value="Calzone Chico" data-price="100">Calzone Chico - $100</option>
-                                <option value="Calzone Mediano (para 2)" data-price="123">Calzone Mediano (para 2) - $123</option>
-                            </optgroup>
-                            <optgroup label="Papas">
-                                <option value="Papas a la Francesa Med" data-price="35">Papas a la Francesa Mediana - $35</option>
-                                <option value="Papas a la Francesa Gde" data-price="50">Papas a la Francesa Grande - $50</option>
-                                <option value="Papas Gajos Med" data-price="45">Papas Gajos Mediana - $45</option>
-                                <option value="Papas Gajos Gde" data-price="65">Papas Gajos Grande - $65</option>
-                            </optgroup>
-                            <optgroup label="Alitas & Complementos">
-                                <option value="Alitas 6 pzas" data-price="65">Alitas 6 pzas - $65</option>
-                                <option value="Alitas 12 pzas" data-price="115">Alitas 12 pzas - $115</option>
-                                <option value="Alitas 18 pzas" data-price="170">Alitas 18 pzas - $170</option>
-                                <option value="Alitas 24 pzas" data-price="220">Alitas 24 pzas - $220</option>
-                                <option value="Alitas 30 pzas" data-price="290">Alitas 30 pzas - $290</option>
-                                <option value="Dedos de Mozzarella" data-price="75">Dedos de Mozzarella - $75</option>
-                            </optgroup>
-                            <optgroup label="Bebidas">
-                                <option value="Refresco 2Lts" data-price="40">Refresco 2Lts - $40</option>
-                                <option value="Refresco Individual" data-price="17">Refresco Individual - $17</option>
-                                <option value="Naranjada" data-price="23">Naranjada - $23</option>
-                            </optgroup>
+                            <option value="Pizza Mini" data-price="56">Pizza Mini - $56</option>
+                            <option value="Pizza Chica" data-price="90">Pizza Chica - $90</option>
+                            <option value="Pizza Mediana" data-price="110">Pizza Mediana - $110</option>
+                            <option value="Pizza Grande" data-price="135">Pizza Grande - $135</option>
+                            <option value="Pizza Familiar" data-price="165">Pizza Familiar - $165</option>
+                            <option value="Hamburguesa Sencilla" data-price="50">Hamburguesa Sencilla - $50</option>
+                            <option value="Hamburguesa con Papas" data-price="60">Hamburguesa con Papas - $60</option>
+                            <option value="Hamburguesa Hawaiana" data-price="70">Hamburguesa Hawaiana - $70</option>
+                            <option value="Alitas 6 pzas" data-price="65">Alitas 6 pzas - $65</option>
+                            <option value="Alitas 12 pzas" data-price="115">Alitas 12 pzas - $115</option>
+                            <option value="Papas a la Francesa Med" data-price="35">Papas a la Francesa Med - $35</option>
+                            <option value="Refresco 2Lts" data-price="40">Refresco 2Lts - $40</option>
                         </select>
                     </div>
 
@@ -397,136 +418,16 @@
                         <input type="number" id="cantidadInput" value="1" min="1" max="10">
                     </div>
 
-                    <button type="button" id="agregarBtn" class="btn-secondary btn-full">➕ Agregar Selección al Pedido</button>
+                    <button type="button" id="agregarBtn" class="btn-secondary btn-full">➕ Agregar Selección</button>
                 </div>
 
-                <!-- Resumen y Datos de Envío -->
+                <!-- Carrito & Métodos de Pago -->
                 <div class="order-summary-box">
-                    <h3>2. Tu Carrito y Datos de Entrega</h3>
+                    <label>Tu Carrito:</label>
                     <ul id="cartList" class="cart-list">
                         <li class="cart-empty">Aún no has agregado productos.</li>
                     </ul>
 
                     <div class="cart-total-container">
-                        <span>Total estimado:</span>
-                        <strong id="cartTotal">$0.00</strong>
-                    </div>
-
-                    <div class="form-group mt-20">
-                        <label for="clienteNombre">Tu Nombre:</label>
-                        <input type="text" id="clienteNombre" placeholder="Ej. Carlos Pérez" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="clienteDireccion">Dirección de Entrega:</label>
-                        <textarea id="clienteDireccion" rows="2" placeholder="Calle, número, colonia, referencias..." required></textarea>
-                    </div>
-
-                    <!-- SECCIÓN MÉTODOS DE PAGO -->
-                    <div class="payment-methods-box mt-20">
-                        <h3>3. Método de Pago</h3>
-                        <div class="form-group">
-                            <label for="metodoPagoSelect">¿Cómo vas a pagar?:</label>
-                            <select id="metodoPagoSelect">
-                                <option value="Efectivo">💵 Efectivo (Pago al repartidor)</option>
-                                <option value="Tarjeta">💳 Tarjeta (Terminal al entregar)</option>
-                                <option value="Transferencia">🏦 Transferencia SPEI</option>
-                            </select>
-                        </div>
-
-                        <!-- Detalles según Método -->
-                        <div id="pagoEfectivoBox" class="payment-detail-card">
-                            <div class="form-group">
-                                <label for="montoEfectivoInput">¿Con cuánto dinero vas a pagar?:</label>
-                                <input type="number" id="montoEfectivoInput" placeholder="Ej. 200 o 500" min="0">
-                            </div>
-                            <p class="payment-note" id="cambioCalculadoNota">Calcularemos tu cambio automáticamente.</p>
-                        </div>
-
-                        <div id="pagoTarjetaBox" class="payment-detail-card" style="display: none;">
-                            <p class="payment-info-text">💳 El repartidor llevará terminal inalámbrica para cobro con tarjeta de débito o crédito.</p>
-                        </div>
-
-                        <div id="pagoTransferenciaBox" class="payment-detail-card" style="display: none;">
-                            <div class="spei-details">
-                                <p class="spei-title">Datos para Transferencia SPEI:</p>
-                                <p><strong>Banco:</strong> BBVA México</p>
-                                <p><strong>CLABE:</strong> <code id="clabeNum">1234 5678 9012 3456 78</code></p>
-                                <p><strong>Beneficiario:</strong> Piero's Pizza</p>
-                                <p class="spei-alert">⚠️ Deberás adjuntar el comprobante o captura de pantalla al enviar tu mensaje por WhatsApp.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group mt-20">
-                        <label for="clienteNotas">Notas adicionales (opcional):</label>
-                        <input type="text" id="clienteNotas" placeholder="Ej. Salsas para alitas, sin cebolla, etc.">
-                    </div>
-
-                    <button type="button" id="enviarWSPBtn" class="btn-primary btn-full mt-20">Enviar Pedido por WhatsApp 📲</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección Ubicación & Horarios -->
-        <section id="nosotros" class="content-section fade-in">
-            <div class="grid-two-columns">
-                <div class="text-block">
-                    <span class="badge-tag">📍 Ubicación</span>
-                    <h2>¿Dónde Estamos?</h2>
-                    <p class="nosotros-intro">Av. Vidrio Arce # 48, Fracc. Valle de los Molinos, Zapopan, Jal.</p>
-                    <div class="horarios-box">
-                        <h3>⏰ Horarios de Atención</h3>
-                        <p><strong>Miércoles a Domingo:</strong> 1:00 PM – 12:00 AM</p>
-                    </div>
-                </div>
-                <div class="image-card-wrapper">
-                    <div class="info-card-visual">
-                        <span class="big-emoji">🛵</span>
-                        <h3>Servicio Rápido</h3>
-                        <p>Tus alimentos llegan calientes y listos para disfrutar.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección Contacto Directo -->
-        <section id="contacto" class="content-section fade-in">
-            <div class="contacto-header">
-                <span class="badge-contacto">Atención Directa</span>
-                <h2>Teléfonos de Contacto</h2>
-            </div>
-
-            <div class="contacto-wrapper" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                <div class="contacto-card">
-                    <div>
-                        <div class="contacto-icon">💬</div>
-                        <h3>WhatsApp Principal</h3>
-                        <p>Tel: 33 1677 3484</p>
-                    </div>
-                    <div class="contacto-card-footer">
-                        <a href="https://wa.me/523316773484" target="_blank" class="btn-secondary btn-full">Escribir</a>
-                    </div>
-                </div>
-
-                <div class="contacto-card">
-                    <div>
-                        <div class="contacto-icon">📱</div>
-                        <h3>WhatsApp Pedidos</h3>
-                        <p>Tel: 33 2782 1503</p>
-                    </div>
-                    <div class="contacto-card-footer">
-                        <a href="https://wa.me/523327821503" target="_blank" class="btn-secondary btn-full">Escribir</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2026 Piero's Pizza - Pizzeria · Restaurant · Gourmet. Todos los derechos reservados.</p>
-    </footer>
-
-    <script src="script.js"></script>
-</body>
-</html>
+                        <span>Total:</span>
+                        <strong id="cart
